@@ -1,7 +1,7 @@
 PHP_SERVICE := docker-compose exec php sh -c
 
 # Extract environment variables needed by the environment
-export PROJECT_LOCATION :=
+export PROJECT_LOCATION := $(shell echo ${MAKEFILE_DIRECTORY})
 
 # Define a static project name that will be prepended to each service name
 export COMPOSE_PROJECT_NAME := ${PROJECT_LOCATION}
