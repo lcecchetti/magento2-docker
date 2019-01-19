@@ -1,0 +1,48 @@
+version: "3.4"
+
+services:
+
+  elasticsearch:
+    build: docker/elasticsearch
+    env_file: docker/config/.env
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+
+  mysql:
+    image: mysql:5.7
+    env_file: ./docker/config/.env
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+
+  nginx:
+    build: docker/nginx
+    env_file: ./docker/config/.env
+    ports:
+      - 443:443
+    volumes:
+      - ./src:/var/www/html:rw,delegated
+      # Custom configuration
+      - ./docker/config/nginx.conf:/etc/nginx/conf.d/custom.conf:ro
+
+  php:
+    build: docker/php
+    env_file: ./docker/config/.env
+    volumes:
+      - ./src:/var/www/html:rw,delegated
+      # Custom configuration
+      - ./docker/php/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+      # SSH keys
+      - ~/.ssh:/root/.ssh:ro
+
+  redis:
+    image: redis:3.2-alpine
+    env_file: ./docker/config/.env
+    volumes:
+      - redis:/data
+
+volumes:
+  elasticsearch: {}
+  mysql: {}
+  redis: {}
